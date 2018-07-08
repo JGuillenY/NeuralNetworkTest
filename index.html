@@ -139,7 +139,7 @@
         const Trainer = synaptic.Trainer;
 
         const inputLayer = new Layer(maxWordLength * 8);
-        const hiddenLayer = new Layer(4);
+        const hiddenLayer = new Layer(maxWordLength * 6);
         const outputLayer = new Layer(4);
 
         inputLayer.project(hiddenLayer);
@@ -155,24 +155,55 @@
             var now = new Date();
 
             var word = $("#trainword").val();
+            var wordset = [["hola", [0,0,0,1]], ["objeto", [0,0,1,0]], ["saber", [0,1,0,0]], ["adios", [1,0,0,0]]];
             var timestotrain = $("#timestotrain").val();
             var result = $("#resultexpected").val();
             var learningRate = .3;
-            var trainningArray = [];
-            var nobinary = transmute(word);
-            for(var i in nobinary){
-                trainningArray.push(toBinary(nobinary[i]));
+            var trainningArray = {"0001" : [], "0010" : [], "0100" : [], "1000" : []};
+            for(var i in wordset){
+                switch(wordset[i][1].indexOf(1)){
+                    case 0:
+                        var nobinary = transmute(wordset[i][0]);
+                        for(var i in nobinary){
+                            trainningArray["0001"].push(toBinary(nobinary[i]));
+                        }
+                        break;
+                    case 1:
+                        var nobinary = transmute(wordset[i][0]);
+                        for(var i in nobinary){
+                            trainningArray["0010"].push(toBinary(nobinary[i]));
+                        }
+                        break;
+                    case 2:
+                        var nobinary = transmute(wordset[i][0]);
+                        for(var i in nobinary){
+                            trainningArray["0100"].push(toBinary(nobinary[i]));
+                        }
+                        break;
+                    case 3:
+                        var nobinary = transmute(wordset[i][0]);
+                        for(var i in nobinary){
+                            trainningArray["1000"].push(toBinary(nobinary[i]));
+                        }
+                        break;
+                }
             }
             console.log(trainningArray);
             console.log("---------------------------------------------------------");
-            console.log("Word to train : " + word);
+            console.log("Starting to train.");
             for (var i = 0; i < timestotrain; i++) {
                 for(var j in trainningArray){
-                    var guess = null;
-                    guess = myNetwork.activate(trainningArray);
-                    myNetwork.propagate(learningRate, result);
-                    console.log("guess=" + guess + " : result=" + result);
-                    $("#log").append("guess=" + guess + " : result=" + result + "\n");
+                    console.log(j);
+                    for(var k in trainningArray[j]){
+                        var guess = null;
+                        console.log("Now Trainning " + trainningArray[j][k]);
+                        var expectedResult = numerizeArray(j.split(""));
+                        console.log("Expecting " + expectedResult);
+                        guess = myNetwork.activate(trainningArray[j][k]);
+                        myNetwork.propagate(learningRate, expectedResult);
+                        console.log("guess=" + guess + " : result=" + result);
+                        $("#log").append("guess=" + guess + " : result=" + result + "\n");
+                    }
                 }
             }
             var finish = new Date();
@@ -260,8 +291,8 @@
             for(var i in array){
                 newArray.push(parseInt(array[i]))
             }
-            console.log("input: " + array);
-            console.log("output: " + newArray);
+            //console.log("input: " + array);
+            //console.log("output: " + newArray);
             return newArray;
         }
         
@@ -270,13 +301,13 @@
         var normalizeBinary = (binary) => {
             var now = new Date();
             var maxrange = maxWordLength - (binary.length/8);
-            console.log("---------------------------------------------------------");
-            console.log("Binary to normalize : " + binary);
+            //console.log("---------------------------------------------------------");
+            //console.log("Binary to normalize : " + binary);
             for(var i = 0; i < maxrange; i++){
                 binary += "00000000";
             }
             var finish = new Date();
-            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
             return numerizeArray(binary.split(''));
         }
         
@@ -285,17 +316,17 @@
         var toBinary = (word) => {
             var now = new Date();
             var binaryWord = "";
-            console.log("---------------------------------------------------------");
-            console.log("Word to convert: " + word);
+            //console.log("---------------------------------------------------------");
+            //console.log("Word to convert: " + word);
             for(var i in word){
                 var binaryChar = "";
                 binaryChar += word[i].charCodeAt(0).toString(2);
                 binaryChar = new Array(9 - binaryChar.length).join('0') + binaryChar;
                 binaryWord += binaryChar;
             }
-            console.log("Converted word: " + binaryWord);
+            //console.log("Converted word: " + binaryWord);
             var finish = new Date();
-            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
             return normalizeBinary(binaryWord);
         }
 
@@ -304,10 +335,10 @@
             var input = $("#wordtotrain").val();
             var listofwords = [];
             listofwords = transmute(input);
-            console.log(listofwords);
+            //console.log(listofwords);
             $("#binaryresult").html(listofwords.join(" , "));
             var finish = new Date();
-            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
         }
 
         var startProcess = () => {
@@ -316,19 +347,19 @@
             var inputArray = [];
             var binaryArray = [];
             var binaries = [];
-            console.log(input);
+            //console.log(input);
             inputArray = input.split(" ");
-            console.log(inputArray);
+            //console.log(inputArray);
             for(var i in inputArray){
                 var purgedWord = purgeString(inputArray[i]);
                 if(purgedWord) binaryArray.push(toBinary(purgedWord));
             }
-            console.log("---------------------------------------------------------");
-            console.log("Binary Array :");
-            console.log(binaryArray);
+            //console.log("---------------------------------------------------------");
+            //console.log("Binary Array :");
+            //console.log(binaryArray);
             $("#binaryresult").html(binaryArray.join(" "));
             var finish = new Date();
-            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
         }
 
         
