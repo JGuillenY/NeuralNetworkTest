@@ -46,8 +46,8 @@
             </a>
             <div class="collapse" id="interact">
                 <div class="card card-body">
-                    <input/>
-                    <button>Send</button>
+                    <input id="wordAsked" type="text"/>
+                    <button onclick="askQuestion()">Send</button>
                     <br/>
                     <textarea id="response"></textarea>
                 </div>
@@ -56,7 +56,10 @@
             <h3>Log</h3>
             <div class="row">
                 <div class="card card-body">
-                    <textarea id="log"></textarea>
+                    <ol id="log">
+                        <li>LOG</li>
+                        <hr/>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -82,10 +85,14 @@
             ['ca', 'ka'],
             ['ha', 'a'],
             ['a', 'ha'],
+            ['he', 'e'],
+            ['by', 'bi'],
+            ['bi', 'by'],
+            ['ve', 'be'],
         ];
 
         //This will be configuration for process:
-        const minWordLength = 2;
+        const minWordLength = 1;
         const maxWordLength = 27;
         const notAllowedChars = "/[&\/\\#,+()$~%.'\":*?<>{}¡¿!-_]";
         const purgingPattern = 1;
@@ -142,6 +149,8 @@
         const hiddenLayer = new Layer(maxWordLength * 6);
         const outputLayer = new Layer(4);
 
+        const presicion = .9;
+
         inputLayer.project(hiddenLayer);
         hiddenLayer.project(outputLayer);
 
@@ -155,7 +164,29 @@
             var now = new Date();
 
             var word = $("#trainword").val();
-            var wordset = [["hola", [0,0,0,1]], ["objeto", [0,0,1,0]], ["saber", [0,1,0,0]], ["adios", [1,0,0,0]]];
+            var wordset = [
+                            //Welcome
+                            ["hola", [0,0,0,1]],
+                            ["hey", [0,0,0,1]],
+                            //Object
+                            ["objeto", [0,0,1,0]],
+                            ["cosa", [0,0,1,0]],
+                            //Question
+                            ["saber", [0,1,0,0]],
+                            ["costo", [0,1,0,0]], 
+                            //Ignored
+                            ["la", [0,0,0,0]],
+                            ["el", [0,0,0,0]],
+                            ["tu", [0,0,0,0]],
+                            ["para", [0,0,0,0]],
+                            ["por", [0,0,0,0]],
+                            ["que", [0,0,0,0]],
+                            ["yo", [0,0,0,0]],
+                            ["esa", [0,0,0,0]],
+                            ["ese", [0,0,0,0]],
+                            //Goodbye
+                            ["adios", [1,0,0,0]],
+                            ["bye", [1,0,0,0]] ];
             var timestotrain = $("#timestotrain").val();
             var result = $("#resultexpected").val();
             var learningRate = .3;
@@ -202,7 +233,7 @@
                         guess = myNetwork.activate(trainningArray[j][k]);
                         myNetwork.propagate(learningRate, expectedResult);
                         console.log("guess=" + guess + " : result=" + result);
-                        $("#log").append("guess=" + guess + " : result=" + result + "\n");
+                        $("#log").append("<li>take " + i + ", word # " + k +  " -> aguess=" + guess + " : result=" + expectedResult + "</li>");
                     }
                 }
             }
@@ -362,7 +393,36 @@
             //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
         }
 
-        
+        var askWord = (word) => {
+            //var word = $("#wordAsked").val();
+            console.log("ASKING " + word);
+            var interpretation = myNetwork.activate(toBinary(purgeString(word)));
+            var translation = [];
+            for(var x in interpretation){
+                if(interpretation[x] >= presicion){
+                    translation.push(1);
+                }else translation.push(0);
+            }
+            console.log("RESPONSE " + interpretation);
+            console.log("INTERPRETATION " + translation.reverse().join());
+            console.log("IT IS A " + catalog[translation.join().replace(/,/g, "")]);
+            return translation.reverse();
+        }
+
+        var askQuestion = () => {
+            var question = $("#wordAsked").val().split(" ");
+            var preConclusion = [];
+            var conclusion = [0, 0, 0, 0];
+            for(var i in question){
+                var preConclusion = askWord(question[i]);
+                for(var j in preConclusion){
+                    conclusion[j] += preConclusion[j];
+                    if(conclusion[j] >= 1) conclusion[j] = 1;
+                }
+            }
+            console.log("Conclusion " + conclusion.reverse());
+            $("#response").html(responses[conclusion.join().replace(/,/g, "")]);
+        }
 
     </script>
 </html>
