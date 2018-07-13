@@ -1,5 +1,5 @@
-//This library contains all the functions related to neural network trainning and word processing.
-//It needs to have wordprocessor added in order to work (it uses methods from there.)
+//This library contains all the functions related to neural network trainning.
+//It needs to have wordprocessor.js added in order to work (it uses methods from there.)
 
 //Neural Network variables
 const catalog = {
@@ -76,13 +76,15 @@ var trainNetwork = () => {
                     ["chingadera", [0,0,1,0]],
                     ["pendejada", [0,0,1,0]],
                     ["rollo", [0,0,1,0]],
+                    ["cancion", [0,0,1,0]],
                     //Question
                     ["saber", [0,1,0,0]],
                     ["costo", [0,1,0,0]],
                     ["precio", [0,1,0,0]],
                     ["cuesta", [0,1,0,0]],
                     ["sale", [0,1,0,0]],
-                    ["cuanto", [0,1,0,0]],
+                    ["cuánto", [0,1,0,0]],
+                    ["qué", [0,1,0,0]],
                     //Ignored
                     ["la", [0,0,0,0]],
                     ["el", [0,0,0,0]],
