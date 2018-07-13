@@ -17,7 +17,8 @@
                 <div class="col">
                     <input id="wordtotrain" type="text"/>
                     <button onclick="startProcess()">Process<span class="glyphicon glyphicon-education" aria-hidden="true"></span></button>
-                    <button onclick="startDecomposition()">transmute<span class="glyphicon glyphicon-education" aria-hidden="true"></span></button>
+                    <button onclick="startDecomposition()">Transmute<span class="glyphicon glyphicon-education" aria-hidden="true"></span></button>
+                    <button onclick="startStringProcess()">Convert</button>
                 </div>
             </div>
             <div class="row">
@@ -68,4 +69,61 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/synaptic.js"></script>
     <script src="js/orula.js"></script>
+    <script>
+        var startStringProcess = () => {
+            var now = new Date();
+            var input = $("#wordtotrain").val();
+            var word = normalizedBinaryToString(input);
+            console.log("Result : " + word);
+            var finish = new Date();
+            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+        }
+
+        var startDecomposition = () => {
+            var now = new Date();
+            var input = $("#wordtotrain").val();
+            var listofwords = [];
+            listofwords = transmute(input);
+            //console.log(listofwords);
+            $("#binaryresult").html(listofwords.join(" , "));
+            var finish = new Date();
+            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+        }
+
+        var startProcess = () => {
+            var now = new Date();
+            var input = $("#wordtotrain").val();
+            var inputArray = [];
+            var binaryArray = [];
+            var binaries = [];
+            //console.log(input);
+            inputArray = input.split(" ");
+            //console.log(inputArray);
+            for(var i in inputArray){
+                var purgedWord = purgeString(inputArray[i]);
+                if(purgedWord) binaryArray.push(toBinary(purgedWord));
+            }
+            //console.log("---------------------------------------------------------");
+            //console.log("Binary Array :");
+            //console.log(binaryArray);
+            $("#binaryresult").html(binaryArray.join(" "));
+            var finish = new Date();
+            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+        }
+
+        var askQuestion = () => {
+            var question = $("#wordAsked").val().split(" ");
+            var preConclusion = [];
+            var conclusion = [0, 0, 0, 0];
+            for(var i in question){
+                var preConclusion = askWord(question[i]);
+                for(var j in preConclusion){
+                    conclusion[j] += preConclusion[j];
+                    if(conclusion[j] >= 1) conclusion[j] = 1;
+                }
+            }
+            console.log("Conclusion " + conclusion.reverse());
+            $("#response").html(responses[conclusion.join().replace(/,/g, "")]);
+        }
+    </script>
 </html>
