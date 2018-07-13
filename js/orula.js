@@ -1,27 +1,5 @@
 //This library contains all the functions related to neural network trainning and word processing.
 //It needs to have wordprocessor added in order to work (it uses methods from there.)
-//This will be configuration for decomposition:
-const ruleSet1 = [
-    ['qu', 'k'],
-    ['qu', 'q'],
-    ['que', 'q'],
-    ['si', 'zi'],
-    ['si', 'ci'],
-    ['se', 'c'],
-    ['se', 'ze'],
-    ['ho', 'o'],
-    //['o', 'ho'],
-    ['s', 'z'],
-    ['por', 'x'],
-    ['cu', 'ku'],
-    ['ca', 'ka'],
-    ['ha', 'a'],
-    //['a', 'ha'],
-    ['he', 'e'],
-    ['by', 'bi'],
-    ['bi', 'by'],
-    ['ve', 'be'],
-];
 
 //Neural Network variables
 const catalog = {
@@ -31,21 +9,21 @@ const catalog = {
     "1000" : "goodbye"
 }
 
-    // "0001" : "saying hello",
-    // "0010" : "mentioning product",
-    // "0011" : "say hello to product",
-    // "0100" : "he is asking something",
-    // "0101" : "he is asking if someone is there",
-    // "0110" : "he is asking about a product",
-    // "0111" : "he is saying hello and asking for a product",
-    // "1000" : "he is saying goodbye",
-    // "1001" : "he is saying hello and goodbye",
-    // "1010" : "he is mentioning a product and saying goodbye",
-    // "1011" : "he is saying hello to a product and then goodbye",
-    // "1100" : "he is asking if there is a goodbye",
-    // "1110" : "he is asking about a product and saying goodbye",
-    // "1101" : "he is asking a question and saying goodbye",
-    // "1111" : "he is leaving a note about everything he wants"
+// "0001" : "saying hello",
+// "0010" : "mentioning product",
+// "0011" : "say hello to product",
+// "0100" : "he is asking something",
+// "0101" : "he is asking if someone is there",
+// "0110" : "he is asking about a product",
+// "0111" : "he is saying hello and asking for a product",
+// "1000" : "he is saying goodbye",
+// "1001" : "he is saying hello and goodbye",
+// "1010" : "he is mentioning a product and saying goodbye",
+// "1011" : "he is saying hello to a product and then goodbye",
+// "1100" : "he is asking if there is a goodbye",
+// "1110" : "he is asking about a product and saying goodbye",
+// "1101" : "he is asking a question and saying goodbye",
+// "1111" : "he is leaving a note about everything he wants"
 
 const responses = {
     "0000" : "You should try to be more clear this time...",
@@ -87,8 +65,6 @@ const myNetwork = new Network({
 
 var trainNetwork = () => {
     var now = new Date();
-
-    var word = $("#trainword").val();
     var wordset = [
                     //Welcome
                     ["hola", [0,0,0,1]],
@@ -122,7 +98,6 @@ var trainNetwork = () => {
                     ["nos vemos", [1,0,0,0]],
                     ["bye", [1,0,0,0]] ];
     var timestotrain = $("#timestotrain").val();
-    var result = $("#resultexpected").val();
     var learningRate = .3;
     var trainningArray = {"0001" : [], "0010" : [], "0100" : [], "1000" : [], "0000" : []};
     for(var i in wordset){
