@@ -1,9 +1,15 @@
-<html>
+<!-- Interface for Neural Network Administrator Test.
+This is only a draw, so it doesn't look appealing, but it works. 
+Created by Jesus Guillen in collaboration with Rodrigo Muniello-->
+<!DOCTYPE html>
+<html lang="es">
     <head>
         <title>Neural Network Test</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap-reboot.min.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <div class="container">
@@ -14,10 +20,10 @@
             <h3>Word Processing & Transmuting</h3>
             <div class="row">
                 <div class="col">
-                    <input id="wordtotrain" type="text"/>
-                    <button onclick="startProcess()">Process<span class="glyphicon glyphicon-education" aria-hidden="true"></span></button>
-                    <button onclick="startDecomposition()">Transmute<span class="glyphicon glyphicon-education" aria-hidden="true"></span></button>
-                    <button onclick="startStringProcess()">Convert</button>
+                    <input id="wordtotrain" type="text" placeholder="Enter a word to process."/>
+                    <button title="Converts the word into a normalized binary." onclick="startProcess()">Process</button>
+                    <button title="Gets possible combinations of the word based on RuleSet defined." onclick="startDecomposition()">Transmute</button>
+                    <button title="Converts normalized binary into string." onclick="startStringProcess()">Convert</button>
                 </div>
             </div>
             <div class="row">
@@ -30,21 +36,21 @@
             <h3>Trainer</h3>
             <div class="row">
                 <div class="col">
-                    <input id="timestotrain" type="number" value="0"/>
-                    <button onclick="trainNetwork()">Train<span class="glyphicon glyphicon-education" aria-hidden="true"></span></button>
+                    <input id="timestotrain" placeholder="Times to Train" type="number"/>
+                    <button title="Train the network for the times specified." onclick="trainNetwork()">Train</button>
                 </div>
                 <div class="col">
-                    <button>Save</button>
-                    <button>Load</button>
+                    <button title="Save neural network learned parameters.">Save</button>
+                    <button title="Load neural network learned parameters.">Load</button>
                 </div>
             </div>
             <hr/>
             <a data-toggle="collapse" href="#interact" role="button" aria-expanded="false" aria-controls="interact">
-                <h3>Interact <span class="glyphicon glyphicon-star" aria-hidden="true"></span></h3>
+                <h3>Interact</h3>
             </a>
             <div class="collapse" id="interact">
                 <div class="card card-body">
-                    <input id="wordAsked" type="text"/>
+                    <input id="wordAsked" type="text" placeholder="Text or Question"/>
                     <button onclick="askQuestion()">Send</button>
                     <br/>
                     <textarea id="response"></textarea>
@@ -67,6 +73,9 @@
     <script src="js/synaptic.js"></script>
     <script src="js/wordprocessor.js"></script>
     <script src="js/orula.js"></script>
+    <!-- This Script part is here for legibility reasons, they are not methods to be packed into a library. They are more likely
+    intertace functionality using the libraries created in advance. When using a framework like React or Angular, this will
+    be part of the controllers. Right now our interest is to see them working rapidly. -->
     <script>
         var startStringProcess = () => {
             var now = new Date();
@@ -82,10 +91,9 @@
             var input = $("#wordtotrain").val();
             var listofwords = [];
             listofwords = transmute(input);
-            //console.log(listofwords);
             $("#binaryresult").html(listofwords.join(" , "));
             var finish = new Date();
-            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
         }
 
         var startProcess = () => {
@@ -94,22 +102,18 @@
             var inputArray = [];
             var binaryArray = [];
             var binaries = [];
-            //console.log(input);
             inputArray = input.split(" ");
-            //console.log(inputArray);
             for(var i in inputArray){
                 var purgedWord = purgeString(inputArray[i]);
                 if(purgedWord) binaryArray.push(toBinary(purgedWord));
             }
-            //console.log("---------------------------------------------------------");
-            //console.log("Binary Array :");
-            //console.log(binaryArray);
             $("#binaryresult").html(binaryArray.join(" "));
             var finish = new Date();
-            //console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
+            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
         }
 
         var askQuestion = () => {
+            var now = new Date();
             var question = $("#wordAsked").val().split(" ");
             var preConclusion = [];
             var conclusion = [0, 0, 0, 0];
@@ -121,9 +125,11 @@
                 }
             }
             conclusion = conclusion + "";
-            console.log("Conclusion " + conclusion);
-            console.log("Conclusion String " + responses[conclusion.replace(/,/g, "")]);
+            // console.log("Conclusion " + conclusion);
+            // console.log("Conclusion String " + responses[conclusion.replace(/,/g, "")]);
             $("#response").html(responses[conclusion.replace(/,/g, "")]);
+            var finish = new Date();
+            console.log("Took " + (finish.getTime() - now.getTime()) + " miliseconds to finish.");
         }
     </script>
 </html>

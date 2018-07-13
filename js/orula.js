@@ -6,7 +6,8 @@ const catalog = {
     "0001" : "salute",
     "0010" : "product",
     "0100" : "question",
-    "1000" : "goodbye"
+    "1000" : "goodbye",
+    "0000" : "unknown"
 }
 
 // "0001" : "saying hello",
@@ -145,7 +146,7 @@ var trainNetwork = () => {
                 guess = myNetwork.activate(trainningArray[j][k]);
                 myNetwork.propagate(learningRate, expectedResult);
                 console.log("guess=" + guess + " : result=" + expectedResult);
-                $("#log").append("<li>take " + i + ", word # " + k +  " -> aguess=" + guess + " : result=" + expectedResult + "</li>");
+                $("#log").append("<li>Word : " + normalizedBinaryToString(trainningArray[j][k].join().replace(/,/g, "")) + " ("+ expectedResult +") -> GUESS = " + guess +"</li>");
             }
         }
     }
