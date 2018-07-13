@@ -122,8 +122,10 @@
                     if(conclusion[j] >= 1) conclusion[j] = 1;
                 }
             }
-            console.log("Conclusion " + conclusion.reverse());
-            $("#response").html(responses[conclusion.join().replace(/,/g, "")]);
+            conclusion = conclusion + "";
+            console.log("Conclusion " + conclusion);
+            console.log("Conclusion String " + responses[conclusion.replace(/,/g, "")]);
+            $("#response").html(responses[conclusion.replace(/,/g, "")]);
         }
     </script>
 </html>

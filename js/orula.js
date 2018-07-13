@@ -10,13 +10,13 @@ const ruleSet1 = [
     ['se', 'c'],
     ['se', 'ze'],
     ['ho', 'o'],
-    ['o', 'ho'],
+    //['o', 'ho'],
     ['s', 'z'],
     ['por', 'x'],
     ['cu', 'ku'],
     ['ca', 'ka'],
     ['ha', 'a'],
-    ['a', 'ha'],
+    //['a', 'ha'],
     ['he', 'e'],
     ['by', 'bi'],
     ['bi', 'by'],
@@ -54,6 +54,7 @@ const catalog = {
     // "1111" : "he is leaving a note about everything he wants"
 
 const responses = {
+    "0000" : "You should try to be more clear this time...",
     "0001" : "Hello! how can i help you?",
     "0010" : "Do you need help with <x>?",
     "0011" : "Hello! Do you need help with <x>?",
@@ -98,12 +99,20 @@ var trainNetwork = () => {
                     //Welcome
                     ["hola", [0,0,0,1]],
                     ["hey", [0,0,0,1]],
+                    ["alo", [0,0,0,1]],
                     //Object
                     ["objeto", [0,0,1,0]],
                     ["cosa", [0,0,1,0]],
+                    ["chingadera", [0,0,1,0]],
+                    ["pendejada", [0,0,1,0]],
+                    ["rollo", [0,0,1,0]],
                     //Question
                     ["saber", [0,1,0,0]],
-                    ["costo", [0,1,0,0]], 
+                    ["costo", [0,1,0,0]],
+                    ["precio", [0,1,0,0]],
+                    ["cuesta", [0,1,0,0]],
+                    ["sale", [0,1,0,0]],
+                    ["cuanto", [0,1,0,0]],
                     //Ignored
                     ["la", [0,0,0,0]],
                     ["el", [0,0,0,0]],
@@ -116,36 +125,38 @@ var trainNetwork = () => {
                     ["ese", [0,0,0,0]],
                     //Goodbye
                     ["adios", [1,0,0,0]],
+                    ["nos vemos", [1,0,0,0]],
                     ["bye", [1,0,0,0]] ];
     var timestotrain = $("#timestotrain").val();
     var result = $("#resultexpected").val();
     var learningRate = .3;
-    var trainningArray = {"0001" : [], "0010" : [], "0100" : [], "1000" : []};
+    var trainningArray = {"0001" : [], "0010" : [], "0100" : [], "1000" : [], "0000" : []};
     for(var i in wordset){
         switch(wordset[i][1].indexOf(1)){
             case 0:
                 var nobinary = transmute(wordset[i][0]);
-                for(var i in nobinary){
-                    trainningArray["0001"].push(toBinary(nobinary[i]));
-                }
+                trainningArray["1000"].push(toBinary(wordset[i][0]));
+                for(var i in nobinary) trainningArray["1000"].push(toBinary(nobinary[i]));
                 break;
             case 1:
                 var nobinary = transmute(wordset[i][0]);
-                for(var i in nobinary){
-                    trainningArray["0010"].push(toBinary(nobinary[i]));
-                }
+                trainningArray["0100"].push(toBinary(wordset[i][0]));
+                for(var i in nobinary) trainningArray["0100"].push(toBinary(nobinary[i]));
                 break;
             case 2:
                 var nobinary = transmute(wordset[i][0]);
-                for(var i in nobinary){
-                    trainningArray["0100"].push(toBinary(nobinary[i]));
-                }
+                trainningArray["0010"].push(toBinary(wordset[i][0]));
+                for(var i in nobinary) trainningArray["0010"].push(toBinary(nobinary[i]));
                 break;
             case 3:
                 var nobinary = transmute(wordset[i][0]);
-                for(var i in nobinary){
-                    trainningArray["1000"].push(toBinary(nobinary[i]));
-                }
+                trainningArray["0001"].push(toBinary(wordset[i][0]));
+                for(var i in nobinary) trainningArray["0001"].push(toBinary(nobinary[i]));
+                break;
+            default:
+                var nobinary = transmute(wordset[i][0]);
+                trainningArray["0000"].push(toBinary(wordset[i][0]));
+                for(var i in nobinary) trainningArray["0000"].push(toBinary(nobinary[i]));
                 break;
         }
     }
@@ -154,15 +165,15 @@ var trainNetwork = () => {
     console.log("Starting to train.");
     for (var i = 0; i < timestotrain; i++) {
         for(var j in trainningArray){
-            console.log(j);
             for(var k in trainningArray[j]){
                 var guess = null;
-                console.log("Now Trainning " + trainningArray[j][k]);
+                //console.log("Now Trainning " + trainningArray[j][k]);
                 var expectedResult = numerizeArray(j.split(""));
-                console.log("Expecting " + expectedResult);
+                console.log("Now Trainning " + normalizedBinaryToString(trainningArray[j][k].join().replace(/,/g, "")));
+                // console.log("Expecting " + expectedResult);
                 guess = myNetwork.activate(trainningArray[j][k]);
                 myNetwork.propagate(learningRate, expectedResult);
-                console.log("guess=" + guess + " : result=" + result);
+                console.log("guess=" + guess + " : result=" + expectedResult);
                 $("#log").append("<li>take " + i + ", word # " + k +  " -> aguess=" + guess + " : result=" + expectedResult + "</li>");
             }
         }
@@ -296,14 +307,14 @@ var toBinary = (word) => {
 //Returns a String.
 var normalizedBinaryToString = (binary) =>{
     var word = "";
-    console.log("---------------------------------------------------------");
-    console.log("Transforming " + binary + " into String.");
+    //console.log("---------------------------------------------------------");
+    //console.log("Transforming " + binary + " into String.");
     binary = binary + "";
     for(var i = 0; i < 27; i++){
-        console.log(binary.slice(i * 8, (i*8) + 8));
+       // console.log(binary.slice(i * 8, (i*8) + 8));
         var character = String.fromCharCode(parseInt(binary.slice(i * 8, (i*8) + 8), 2));
-        console.log("Binary char : " + binary.slice(i * 8, (i*8) + 8));
-        console.log(i + ". Extracted char "+ character);
+        //console.log("Binary char : " + binary.slice(i * 8, (i*8) + 8));
+        //console.log(i + ". Extracted char "+ character);
         if(character != " ") word += character;
     }
     return word;
@@ -322,7 +333,7 @@ var askWord = (word) => {
         }else translation.push(0);
     }
     console.log("RESPONSE " + interpretation);
-    console.log("INTERPRETATION " + translation.reverse().join());
+    console.log("INTERPRETATION " + translation.join());
     console.log("IT IS A " + catalog[translation.join().replace(/,/g, "")]);
-    return translation.reverse();
+    return translation;
 }
