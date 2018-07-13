@@ -146,7 +146,7 @@ var trainNetwork = () => {
                 guess = myNetwork.activate(trainningArray[j][k]);
                 myNetwork.propagate(learningRate, expectedResult);
                 console.log("guess=" + guess + " : result=" + expectedResult);
-                $("#log").append("<li>Word : " + normalizedBinaryToString(trainningArray[j][k].join().replace(/,/g, "")) + " ("+ expectedResult +") -> GUESS = " + guess +"</li>");
+                $("#log").append("<li>Word : " + normalizedBinaryToString(trainningArray[j][k].join().replace(/,/g, "")) + " ("+ expectedResult +") -> GUESS = " + interpretResult(guess).join().replace() +"</li>");
             }
         }
     }
@@ -154,20 +154,25 @@ var trainNetwork = () => {
     console.log("Train finished after " + (finish.getTime() - now.getTime()) + " miliseconds.");
 }
 
+var interpretResult = (guess) => {
+    var interpretation = [];
+    for(var x in guess){
+        if(guess[x] >= presicion){
+            interpretation.push(1);
+        }else interpretation.push(0);
+    }
+    return interpretation
+}
+
 //Receives a word and asks orula what it means.
 //Returns a translation of the word.
 var askWord = (word) => {
     //var word = $("#wordAsked").val();
     console.log("ASKING " + word);
-    var interpretation = myNetwork.activate(toBinary(purgeString(word)));
-    var translation = [];
-    for(var x in interpretation){
-        if(interpretation[x] >= presicion){
-            translation.push(1);
-        }else translation.push(0);
-    }
-    console.log("RESPONSE " + interpretation);
-    console.log("INTERPRETATION " + translation.join());
-    console.log("IT IS A " + catalog[translation.join().replace(/,/g, "")]);
-    return translation;
+    var guess = myNetwork.activate(toBinary(purgeString(word)));
+    var interpretation = interpretResult(guess);
+    //console.log("RESPONSE " + guess);
+    console.log("INTERPRETATION " + interpretation.join());
+    console.log("IT IS A " + catalog[interpretation.join().replace(/,/g, "")]);
+    return interpretation;
 }
