@@ -2,6 +2,8 @@
 //It needs to have wordprocessor.js added in order to work (it uses methods from there.)
 
 //Neural Network variables
+
+//Possible Classes.
 const catalog = {
     "0001" : "salute",
     "0010" : "product",
@@ -10,6 +12,15 @@ const catalog = {
     "0000" : "unknown"
 }
 
+//Possible States.
+const states = {
+    "0001" : "welcoming",
+    "0010" : "asking question",
+    "0100" : "answering question",
+    "1000" : "goodbye"
+}
+
+//Possible Cases
 // "0001" : "saying hello",
 // "0010" : "mentioning product",
 // "0011" : "say hello to product",
@@ -55,6 +66,10 @@ const outputLayer = new Layer(4);
 
 const presicion = .9;
 
+//Depending on the context, the currentState will be changing in order to maintain a general notion of
+//what is the purpose of what is being talked currently.
+var currentState = "0001" //The initial state is always Welcoming.
+
 inputLayer.project(hiddenLayer);
 hiddenLayer.project(outputLayer);
 
@@ -78,6 +93,7 @@ var trainNetwork = () => {
                     ["pendejada", [0,0,1,0]],
                     ["rollo", [0,0,1,0]],
                     ["cancion", [0,0,1,0]],
+                    ["esto", [0,0,1,0]],
                     //Question
                     ["saber", [0,1,0,0]],
                     ["costo", [0,1,0,0]],
@@ -135,6 +151,7 @@ var trainNetwork = () => {
     console.log(trainningArray);
     console.log("---------------------------------------------------------");
     console.log("Starting to train.");
+    console.log("---------------------------------------------------------");
     for (var i = 0; i < timestotrain; i++) {
         for(var j in trainningArray){
             for(var k in trainningArray[j]){
@@ -175,4 +192,9 @@ var askWord = (word) => {
     console.log("INTERPRETATION " + interpretation.join());
     console.log("IT IS A " + catalog[interpretation.join().replace(/,/g, "")]);
     return interpretation;
+}
+
+//Based on the caseId and the current state it formulates a response.
+var formulateResponse = (caseId) => {
+    
 }
