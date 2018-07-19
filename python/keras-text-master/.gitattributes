@@ -1,0 +1,2 @@
+# Count notebooks as python.
+*.ipynb filter=lfs diff=lfs merge=lfs -text
